@@ -11,11 +11,11 @@ class CompletePurchaseRequest extends PurchaseRequest
 {
     public function getData()
     {
-        $this->validate('Ds_Signature');
+        $this->validate('secretKey');
 
-        $data = $this->httpRequest->request->all();
+        $data = $this->httpRequest->query->all();
 
-        if ($this->generateSignature($data) !== $this->httpRequest->request->get('Ds_Signature')) {
+        if ($this->generateSignature($data) !== $data['Ds_Signature']) {
             throw new InvalidRequestException('Incorrect signature');
         }
 
@@ -31,6 +31,6 @@ class CompletePurchaseRequest extends PurchaseRequest
     {
         $input = $data['Ds_Amount'] . $data['Ds_Order'] . $data['Ds_MerchantCode'] . $data['Ds_Currency'] . $data['Ds_Response'];
 
-        return hash('sha1', $input . $this->getParameter('secretKey'));
+        return strtoupper(hash('sha1', $input . $this->getParameter('secretKey')));
     }
 }
