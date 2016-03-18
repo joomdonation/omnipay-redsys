@@ -31,6 +31,6 @@ class CompletePurchaseRequest extends PurchaseRequest
     {
         $input = $data['Ds_Amount'] . $data['Ds_Order'] . $data['Ds_MerchantCode'] . $data['Ds_Currency'] . $data['Ds_Response'];
 
-        return hash('sha1', $input . $this->getParameter('merchantKey'));
+        return hash('sha1', $input . $this->getParameter('secretKey'));
     }
 }

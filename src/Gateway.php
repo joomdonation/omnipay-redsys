@@ -24,7 +24,6 @@ class Gateway extends AbstractGateway
             'consumerLanguage' => '001',
             'currency' => '978',
             'terminal' => '001',
-            'merchantURL' => '',
             'merchantName' => '',
             'transactionType' => '0',
             'testMode' => false
@@ -41,14 +40,9 @@ class Gateway extends AbstractGateway
         return $this->setParameter('merchantCode', $merchantCode);
     }
 
-    public function setMerchantKey($merchantKey)
+    public function setSecretKey($secretKey)
     {
-        return $this->setParameter('merchantKey', $merchantKey);
-    }
-
-    public function setMerchantURL($merchantURL)
-    {
-        return $this->setParameter('merchantURL', $merchantURL);
+        return $this->setParameter('secretKey', $secretKey);
     }
 
     public function setTerminal($terminal)

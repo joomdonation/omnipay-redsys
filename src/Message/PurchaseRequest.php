@@ -34,6 +34,26 @@ class PurchaseRequest extends AbstractRequest
         return $this->setParameter('titular', $titular);
     }
 
+    public function setMerchantName($merchantName)
+    {
+        return $this->setParameter('merchantName', $merchantName);
+    }
+
+    public function setMerchantCode($merchantCode)
+    {
+        return $this->setParameter('merchantCode', $merchantCode);
+    }
+
+    public function setSecretKey($secretKey)
+    {
+        return $this->setParameter('secretKey', $secretKey);
+    }
+
+    public function setTerminal($terminal)
+    {
+        return $this->setParameter('terminal', $terminal);
+    }
+
     public function setConsumerLanguage($consumerLanguage)
     {
         return $this->setParameter('consumerLanguage', $consumerLanguage);
@@ -53,7 +73,7 @@ class PurchaseRequest extends AbstractRequest
         $data['Ds_Merchant_ProductDescription'] = $this->getDescription();
         $data['Ds_Merchant_Titular'] = $this->getParameter('titular');
         $data['Ds_Merchant_MerchantCode'] = $this->getParameter('merchantCode');
-        $data['Ds_Merchant_MerchantURL'] = $this->getParameter('merchantURL');
+        $data['Ds_Merchant_MerchantURL'] = $this->getNotifyUrl();
         $data['Ds_Merchant_UrlOK'] = $this->getReturnUrl();
         $data['Ds_Merchant_UrlKO'] = $this->getCancelUrl();
         $data['Ds_Merchant_MerchantName'] = $this->getParameter('merchantName');
@@ -80,6 +100,6 @@ class PurchaseRequest extends AbstractRequest
     {
         $input = $data['Ds_Merchant_Amount'] . $data['Ds_Merchant_Order'] . $data['Ds_Merchant_MerchantCode'] . $data['Ds_Merchant_Currency'] . $data['Ds_Merchant_TransactionType'] . $data['Ds_Merchant_MerchantURL'];
 
-        return hash('sha1', $input . $this->getParameter('merchantKey'));
+        return hash('sha1', $input . $this->getParameter('secretKey'));
     }
 }
