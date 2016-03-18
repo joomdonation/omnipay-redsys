@@ -58,9 +58,10 @@ class PurchaseRequest extends AbstractRequest
         $data['Ds_Merchant_UrlKO'] = $this->getCancelUrl();
         $data['Ds_Merchant_MerchantName'] = $this->getParameter('merchantName');
         $data['Ds_Merchant_ConsumerLanguage'] = $this->getParameter('consumerLanguage');
-        $data['Ds_Merchant_MerchantSignature'] = $this->generateSignature($data);
         $data['Ds_Merchant_Terminal'] = $this->getParameter('terminal');
         $data['Ds_Merchant_TransactionType'] = $this->getTransactionType();
+
+        $data['Ds_Merchant_MerchantSignature'] = $this->generateSignature($data);
 
         return $data;
     }
