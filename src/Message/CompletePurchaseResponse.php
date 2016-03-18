@@ -12,7 +12,7 @@ class CompletePurchaseResponse extends AbstractResponse
 {
     public function isSuccessful()
     {
-        return preg_match('/^0[0-9][0-9]$/', $this->getCode());
+        return preg_match('/^00[0-9][0-9]$/', $this->getCode());
     }
 
     public function getCode()
