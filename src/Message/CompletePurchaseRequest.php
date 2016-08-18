@@ -3,6 +3,7 @@
 namespace Omnipay\RedSys\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
+use Sarciszewski\PHPFuture\Security;
 
 /**
  * RedSys Complete Purchase Request
@@ -15,7 +16,16 @@ class CompletePurchaseRequest extends PurchaseRequest
 
         $data = $this->httpRequest->query->all();
 
-        if ($this->generateSignature($data) !== $data['Ds_Signature']) {
+        // Constant Time String Comparison @see http://php.net/hash_equals
+        if (!function_exists('hash_equals')) {
+            // Polyfill for PHP < 5.6
+            $equals = Security::hashEquals($this->generateSignature($data), $data['Ds_Signature']);
+        }
+        else {
+            $equals = hash_equals($this->generateSignature($data), $data['Ds_Signature']);
+        }
+
+        if (!$equals) {
             throw new InvalidRequestException('Incorrect signature');
         }
 
