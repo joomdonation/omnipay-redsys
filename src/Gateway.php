@@ -5,14 +5,12 @@ namespace Omnipay\RedSys;
 use Omnipay\Common\AbstractGateway;
 use Omnipay\RedSys\Message\CompletePurchaseRequest;
 use Omnipay\RedSys\Message\PurchaseRequest;
-use Omnipay\Sermepa\Message\RecurrentPurchaseRequest;
 
 /**
  * RedSys Gateway
  */
 class Gateway extends AbstractGateway
 {
-
     public function getName()
     {
         return 'RedSys';

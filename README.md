@@ -6,6 +6,8 @@ Omnipay: RedSys
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements RedSys (formerly Sermepa) support for Omnipay.
 
+**Update (28-10-2016)**: Now working with the new HMAC SHA256 signature, mandatory with Redsys.
+
 Installation
 ------------
 

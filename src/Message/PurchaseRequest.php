@@ -2,17 +2,11 @@
 
 namespace Omnipay\RedSys\Message;
 
-use Omnipay\Common\Message\AbstractRequest;
-
 /**
  * RedSys Purchase Request
  */
-class PurchaseRequest extends AbstractRequest
+class PurchaseRequest extends RequestBase
 {
-    protected $liveEndpoint = 'https://sis.redsys.es/sis/realizarPago';
-
-    protected $testEndpoint = 'https://sis-t.redsys.es:25443/sis/realizarPago';
-
     public function setTransactionId($value)
     {
         if (!preg_match('/^[0-9]{4}[0-9a-zA-Z]{0,8}$/', $value)) {
@@ -34,24 +28,44 @@ class PurchaseRequest extends AbstractRequest
         return $this->setParameter('titular', $titular);
     }
 
-    public function setMerchantName($merchantName)
+    public function getMerchantCode()
     {
-        return $this->setParameter('merchantName', $merchantName);
+        return $this->getParameter('merchantCode');
     }
 
-    public function setMerchantCode($merchantCode)
+    public function setMerchantCode($value)
     {
-        return $this->setParameter('merchantCode', $merchantCode);
+        return $this->setParameter('merchantCode', $value);
     }
 
-    public function setSecretKey($secretKey)
+    public function getSecretKey()
     {
-        return $this->setParameter('secretKey', $secretKey);
+        return $this->getParameter('secretKey');
     }
 
-    public function setTerminal($terminal)
+    public function setSecretKey($value)
     {
-        return $this->setParameter('terminal', $terminal);
+        return $this->setParameter('secretKey', $value);
+    }
+
+    public function getTerminal()
+    {
+        return $this->getParameter('terminal');
+    }
+
+    public function setTerminal($value)
+    {
+        return $this->setParameter('terminal', $value);
+    }
+
+    public function getMerchantName()
+    {
+        return $this->getParameter('merchantName');
+    }
+
+    public function setMerchantName($value)
+    {
+        return $this->setParameter('merchantName', $value);
     }
 
     public function setConsumerLanguage($consumerLanguage)
@@ -59,29 +73,80 @@ class PurchaseRequest extends AbstractRequest
         return $this->setParameter('consumerLanguage', $consumerLanguage);
     }
 
+    public function getExtraData()
+    {
+        return $this->getParameter('extraData');
+    }
+
+    public function setExtraData($value)
+    {
+        return $this->setParameter('extraData', $value);
+    }
+
     public function getTransactionType()
     {
         return '0';
     }
 
+    public function getAuthorisationCode()
+    {
+        return $this->getParameter('authorisationCode');
+    }
+
+    public function setAuthorisationCode($value)
+    {
+        return $this->setParameter('authorisationCode', $value);
+    }
+
+    public function getPayMethods()
+    {
+        return $this->getParameter('payMethods');
+    }
+
+    public function setPayMethods($value)
+    {
+        return $this->setParameter('payMethods', $value);
+    }
+
+    protected function getMerchantOrder()
+    {
+        return $this->getTransactionReference() ?: $this->getTransactionId();
+    }
+
     public function getData()
     {
-        $data = [];
-        $data['Ds_Merchant_Amount'] = $this->getAmountInteger();
-        $data['Ds_Merchant_Currency'] = $this->getCurrencyNumeric();
-        $data['Ds_Merchant_Order'] = $this->getTransactionReference() ?: $this->getTransactionId();
-        $data['Ds_Merchant_ProductDescription'] = $this->getDescription();
-        $data['Ds_Merchant_Titular'] = $this->getParameter('titular');
-        $data['Ds_Merchant_MerchantCode'] = $this->getParameter('merchantCode');
-        $data['Ds_Merchant_MerchantURL'] = $this->getNotifyUrl();
-        $data['Ds_Merchant_UrlOK'] = $this->getReturnUrl();
-        $data['Ds_Merchant_UrlKO'] = $this->getCancelUrl();
-        $data['Ds_Merchant_MerchantName'] = $this->getParameter('merchantName');
-        $data['Ds_Merchant_ConsumerLanguage'] = $this->getParameter('consumerLanguage');
-        $data['Ds_Merchant_Terminal'] = $this->getParameter('terminal');
-        $data['Ds_Merchant_TransactionType'] = $this->getTransactionType();
+        $this->validate('amount', 'currency', 'transactionId', 'merchantCode', 'terminal');
 
-        $data['Ds_Merchant_MerchantSignature'] = $this->generateSignature($data);
+        $parameters = [
+          'Ds_Merchant_Amount' => $this->getAmountInteger(),
+          'Ds_Merchant_Currency' => $this->getCurrencyNumeric(),
+          'Ds_Merchant_Order' => $this->getMerchantOrder(),
+          'Ds_Merchant_ProductDescription' => $this->getDescription(),
+          'Ds_Merchant_Titular' => $this->getParameter('titular'),
+          'Ds_Merchant_MerchantCode' => $this->getMerchantCode(),
+          'Ds_Merchant_MerchantURL' => $this->getNotifyUrl(),
+          'Ds_Merchant_UrlOK' => $this->getReturnUrl(),
+          'Ds_Merchant_UrlKO' => $this->getCancelUrl(),
+          'Ds_Merchant_MerchantName' => $this->getMerchantName(),
+          'Ds_Merchant_ConsumerLanguage' => $this->getParameter('consumerLanguage'),
+          'Ds_Merchant_Terminal' => $this->getTerminal(),
+          'Ds_Merchant_MerchantData' => $this->getExtraData(),
+          'Ds_Merchant_TransactionType' => $this->getTransactionType(),
+          'Ds_Merchant_AuthorisationCode' => $this->getAuthorisationCode(),
+        ];
+        if ($this->getPayMethods())
+        {
+            $parameters['Ds_Merchant_PayMethods'] = $this->getPayMethods();
+        }
+
+        $parameters = $this->getEncoder()->encode($parameters);
+        $signature = $this->getSigner()->generateSignature($parameters, $this->getMerchantOrder());
+
+        $data = [
+          'Ds_MerchantParameters' => $parameters,
+          'Ds_Signature' => $signature,
+          'Ds_SignatureVersion' => 'HMAC_SHA256_V1',
+        ];
 
         return $data;
     }
@@ -89,17 +154,5 @@ class PurchaseRequest extends AbstractRequest
     public function sendData($data)
     {
         return $this->response = new PurchaseResponse($this, $data);
-    }
-
-    public function getEndpoint()
-    {
-        return $this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint;
-    }
-
-    protected function generateSignature($data)
-    {
-        $input = $data['Ds_Merchant_Amount'] . $data['Ds_Merchant_Order'] . $data['Ds_Merchant_MerchantCode'] . $data['Ds_Merchant_Currency'] . $data['Ds_Merchant_TransactionType'] . $data['Ds_Merchant_MerchantURL'];
-
-        return hash('sha1', $input . $this->getParameter('secretKey'));
     }
 }

@@ -10,7 +10,6 @@ use Omnipay\Common\Message\RedirectResponseInterface;
  */
 class PurchaseResponse extends AbstractResponse implements RedirectResponseInterface
 {
-
     public function isSuccessful()
     {
         return false;
@@ -33,6 +32,6 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
 
     public function getRedirectData()
     {
-        return $this->data;
+        return $this->getData();
     }
 }
