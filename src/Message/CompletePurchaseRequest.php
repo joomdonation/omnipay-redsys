@@ -12,8 +12,8 @@ class CompletePurchaseRequest extends PurchaseRequest
     public function getData()
     {
         $query = $this->httpRequest->request;
-        $signature = $query->get('Ds_Signature');
-        $parameters = $query->get('Ds_MerchantParameters');
+        $signature = strtr($query->get('Ds_Signature'), '-_', '+/');
+        $parameters = strtr($query->get('Ds_MerchantParameters'), '-_', '+/');
 
         $data = $this->getEncoder()->decode($parameters);
 

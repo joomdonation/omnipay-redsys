@@ -13,7 +13,7 @@ final class Encoder
 
     public function decode($input)
     {
-        $output = base64_decode(strtr($input, '-_', '+/'));
+        $output = base64_decode($input);
         $output = json_decode($output, true);
         return $output;
     }
