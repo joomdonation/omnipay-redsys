@@ -26,10 +26,11 @@
         "psr-4": { "Omnipay\\RedSys\\" : "src/" }
     },
     "require": {
-        "omnipay/common": "~2.0",
+        "php": "^5.6|^7",
+        "omnipay/common": "^3.0.2",
         "sarciszewski/php-future": "^0.4.2"
     },
     "require-dev": {
-        "omnipay/tests": "~2.0"
+        "omnipay/tests": "~3.0"
     }
 }
