@@ -153,6 +153,6 @@ class PurchaseRequest extends RequestBase
 
     public function sendData($data)
     {
-        return $this->response = new PurchaseResponse($this, http_build_query($data));
+        return $this->response = new PurchaseResponse($this, $data);
     }
 }
