@@ -25,10 +25,9 @@
     "autoload": {
         "psr-4": { "Omnipay\\RedSys\\" : "src/" }
     },
-    "require": {
-        "php": "^5.6|^7",
-        "omnipay/common": "^3.0",
-        "sarciszewski/php-future": "^0.5.0"
+    "require": {        
+        "league/omnipay": "^3",
+        "sarciszewski/php-future": "^0.5"
     },
     "require-dev": {
         "omnipay/tests": "~3.0"
