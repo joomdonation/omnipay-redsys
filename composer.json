@@ -27,8 +27,8 @@
     },
     "require": {
         "php": "^5.6|^7",
-        "omnipay/common": "^3.0.2",
-        "sarciszewski/php-future": "^0.4.2"
+        "omnipay/common": "^3.0",
+        "sarciszewski/php-future": "^0.5.0"
     },
     "require-dev": {
         "omnipay/tests": "~3.0"
