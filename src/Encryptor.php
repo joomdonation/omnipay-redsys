@@ -13,9 +13,27 @@ final class Encryptor
 
     public function encrypt($message)
     {
-        $bytes = [0, 0, 0, 0, 0, 0, 0, 0];
-        $iv = implode(array_map("chr", $bytes));
+	    if (function_exists('openssl_encrypt'))
+	    {
+		    return self::encrypt3DESOpenSSL($message, $this->secretKey);
+	    }
 
-        return mcrypt_encrypt(MCRYPT_3DES, $this->secretKey, $message, MCRYPT_MODE_CBC, $iv);
+	    return self::encrypt3DESMcrypt($message, $this->secretKey);
     }
+
+	protected static function encrypt3DESOpenSSL($message, $key)
+	{
+		$l       = ceil(strlen($message) / 8) * 8;
+		$message = $message . str_repeat("\0", $l - strlen($message));
+
+		return substr(openssl_encrypt($message, 'des-ede3-cbc', $key, OPENSSL_RAW_DATA, "\0\0\0\0\0\0\0\0"), 0, $l);
+	}
+
+	protected static function encrypt3DESMcrypt($message, $key)
+	{
+		$bytes = [0, 0, 0, 0, 0, 0, 0, 0];
+		$iv = implode(array_map("chr", $bytes));
+
+		return mcrypt_encrypt(MCRYPT_3DES, $key, $message, MCRYPT_MODE_CBC, $iv);
+	}
 }
