@@ -18,14 +18,16 @@ class Gateway extends AbstractGateway
 
     public function getDefaultParameters()
     {
-        return array(
-            'consumerLanguage' => '001',
-            'currency' => '978',
-            'terminal' => '001',
-            'merchantName' => '',
-            'transactionType' => '0',
-            'testMode' => false
-        );
+	    return array(
+		    'currencyNumber'	=> 'redsys_moneda',
+		    'terminal'			=> 'redsys_terminal',
+		    'merchantName'		=> 'redsys_nombre',
+		    'merchantCode'		=> 'redsys_fuc',
+		    'transactionType'	=> 'redsys_trans',
+		    'testMode'			=> 'redsys_mode',
+		    'secretKey'			=> 'redsys_clave256',
+		    'payMethods'		=> 'redsys_pagos'
+	    );
     }
 
     public function setMerchantName($merchantName)
